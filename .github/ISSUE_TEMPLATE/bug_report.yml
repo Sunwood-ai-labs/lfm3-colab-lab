@@ -1,0 +1,72 @@
+name: 不具合の報告
+description: Colab ノートブック、CLI、ドキュメントの不具合を報告する
+title: "[不具合] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        再現に使った経路と出力を記載してください。個人情報、アクセストークン、非公開データは貼らないでください。
+  - type: dropdown
+    id: surface
+    attributes:
+      label: 対象
+      options:
+        - Colab ノートブック
+        - Python CLI
+        - ドキュメント
+        - その他
+    validations:
+      required: true
+  - type: dropdown
+    id: model
+    attributes:
+      label: モデル
+      description: 該当しない場合は「該当なし」を選んでください。
+      options:
+        - LFM3-1.7B
+        - LFM3-VL-2B
+        - LFM3-Audio-2B
+        - LFM3-Omni-2B
+        - d1-2B
+        - d1-Omni-2B
+        - 該当なし
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: 実行環境
+      description: Colab の GPU またはローカル OS と Python バージョンを記載してください。
+      placeholder: Google Colab, Tesla T4, Python 3.13
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: ノートブックまたはコードのコミット
+      description: 記録している場合は40桁のコミット ID を記載してください。
+    validations:
+      required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: 実行したセルまたはコマンドと、使用した入力を示してください。
+      placeholder: |
+        1. 共通準備セルを実行
+        2. モデルのセルを実行
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の結果
+      description: 出力またはエラーメッセージを示してください。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待した結果
+    validations:
+      required: true

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">LFM3 Colab Lab</title>
+  <desc id="desc">Six distinct geometric tiles connected in a simple grid.</desc>
+  <rect width="128" height="128" rx="24" fill="#101d35"/>
+  <path d="M47 43h9M77 43h8M43 54v19M69 54v19M99 54v19" fill="none" stroke="#d9e7f5" stroke-linecap="round" stroke-width="4" opacity=".55"/>
+  <rect x="20" y="20" width="28" height="28" rx="9" fill="#5bd5bd"/>
+  <circle cx="69" cy="34" r="14" fill="#ffc46b"/>
+  <rect x="85" y="20" width="28" height="28" rx="14" fill="#7faeff"/>
+  <circle cx="34" cy="89" r="14" fill="#c4a7ff"/>
+  <rect x="55" y="75" width="28" height="28" rx="9" fill="#f07d85"/>
+  <rect x="85" y="75" width="28" height="28" rx="8" fill="#f2e48d"/>
+</svg>

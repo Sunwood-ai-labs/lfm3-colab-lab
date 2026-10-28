@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="280" viewBox="0 0 1200 280" role="img" aria-labelledby="title desc">
+  <title id="title">LFM3 Colab Lab</title>
+  <desc id="desc">Six distinct geometric tiles represent six model suites. The banner names Colab and Tesla T4.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101d35"/>
+      <stop offset="1" stop-color="#183c58"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="280" rx="28" fill="url(#background)"/>
+  <circle cx="1085" cy="36" r="110" fill="#59d5bd" opacity=".08"/>
+  <circle cx="1100" cy="266" r="154" fill="#78a9ff" opacity=".08"/>
+  <g transform="translate(70 60)">
+    <rect x="0" y="0" width="54" height="54" rx="16" fill="#5bd5bd"/>
+    <circle cx="92" cy="27" r="27" fill="#ffc46b"/>
+    <rect x="135" y="0" width="54" height="54" rx="27" fill="#7faeff"/>
+    <circle cx="27" cy="120" r="27" fill="#c4a7ff"/>
+    <rect x="65" y="93" width="54" height="54" rx="18" fill="#f07d85"/>
+    <rect x="135" y="93" width="54" height="54" rx="16" fill="#f2e48d"/>
+    <path d="M54 27h11M119 27h16M27 54v39M92 54v39M162 54v39" fill="none" stroke="#d9e7f5" stroke-linecap="round" stroke-width="5" opacity=".5"/>
+  </g>
+  <g fill="#f6f8fc" font-family="Inter,Segoe UI,Arial,sans-serif">
+    <text x="330" y="119" font-size="28" font-weight="700" letter-spacing="3">SIX MODEL SUITES</text>
+    <text x="330" y="168" font-size="22" fill="#c5d4e6">Colab notebook · Tesla T4 · recorded results</text>
+    <text x="330" y="218" font-size="15" fill="#86a4bd" letter-spacing="2">LFM3 COLAB LAB</text>
+  </g>
+</svg>

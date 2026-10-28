@@ -1,0 +1,44 @@
+name: 実験例の提案
+description: 固定テストに追加したい入力や評価例を提案する
+title: "[実験案] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提案する入力、確認したい振る舞い、成功と失敗の判定方法を記載してください。提案の採用や推論実行を約束するフォームではありません。
+  - type: dropdown
+    id: model
+    attributes:
+      label: 対象モデル
+      options:
+        - LFM3-1.7B
+        - LFM3-VL-2B
+        - LFM3-Audio-2B
+        - LFM3-Omni-2B
+        - d1-2B
+        - d1-Omni-2B
+        - 複数モデル
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: 確認したいこと
+      description: その入力で何を調べたいか説明してください。
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: 入力例
+      description: 公開してよいテキストや小さな固定ファイルの例を示してください。
+      placeholder: 非公開データや個人情報は含めないでください。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 判定方法
+      description: 成功、失敗、未採点をどう区別するか記載してください。
+    validations:
+      required: true

@@ -1,31 +1,30 @@
-# Python CLI で実行する
+# Python CLI で固定テストを実行する
 
-Colab ノートブックがこのプロジェクトの主な使い方です。CLI は T4 環境から固定テストを個別に実行したい場合に使います。Python 3.10 以降と NVIDIA Tesla T4 が必要です。CLI は CPU や別の GPU へ自動で切り替えません。
+このプロジェクトの主な使い方は Colab ノートブックです。CLI は Tesla T4 環境から固定テストを個別に実行するときに使います。Python 3.10 以降と、T4 に対応する Torch と CUDA が必要です。CLI は CPU や別の GPU に切り替えません。
 
-## 環境を用意する
+## T4 用の環境を確認する
 
-Torch と CUDA が T4 に対応する Python 環境を用意し、リポジトリのルートで次を実行します。
+T4 対応の Torch と CUDA が入った Python 環境を有効にしてから、次を実行します。2行目に Tesla T4 が表示されることを確認してください。Torch と CUDA 関連パッケージは `requirements-colab.txt` に含まれません。
 
 ```console
-python -m pip install --requirement requirements-colab.txt
-python -m pip install --no-deps --editable .
+uv run --active --no-sync -- python -c "import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CUDA unavailable')"
+uv pip install --requirement requirements-colab.txt
+uv pip install --no-deps --editable .
 ```
 
-`requirements-colab.txt` は Transformers などの実験用パッケージを入れます。Torch、TorchVision、TorchAudio、Triton、NVIDIA CUDA パッケージは含みません。T4 に合う Torch と CUDA の組み合わせを先に用意してください。
+Colab ノートブックを使う場合、CLI 用のパッケージ設定は不要です。
 
-Colab ノートブックを実行する場合、これらのインストール手順は不要です。ノートブックが依存関係を確認してからパッケージを設定します。
+## 固定入力を作る
 
-## 固定入力を用意する
-
-次のコマンドで実験用の画像、音声、動画を `./runs/inputs` に作成します。入力には Google FLEURS の日本語音声サンプルを使います。データの出典とライセンスは[NOTICE](../NOTICE.md)を確認してください。
+このコマンドは画像、音声、動画の入力を `./runs/inputs` に作ります。音声には Google FLEURS の日本語サンプルを使います。データの出典とライセンスは[NOTICE](https://github.com/Sunwood-ai-labs/lfm3-colab-lab/blob/main/NOTICE.md)を確認してください。
 
 ```console
-python -m lfm3_lab prepare --output-dir ./runs --cache-dir ./cache
+uv run --active --no-sync -- python -m lfm3_lab prepare --output-dir ./runs --cache-dir ./cache
 ```
 
 ## モデルを実行する
 
-`run` は1回に1つのモデルを実行します。入力準備後に、試したいモデルのキーを指定してください。
+`run` は一度に1つのモデルを実行します。入力を用意した後、次のキーから選んでください。
 
 | モデル | キー |
 | --- | --- |
@@ -36,28 +35,30 @@ python -m lfm3_lab prepare --output-dir ./runs --cache-dir ./cache
 | d1-2B | `d1` |
 | d1-Omni-2B | `d1_omni` |
 
-たとえば、LFM3-1.7B を3回測るには次を実行します。既定の繰り返し数も3回です。
+次の例は LFM3-1.7B を既定の3回で実行します。
 
 ```console
-python -m lfm3_lab run --model text --output-dir ./runs
+uv run --active --no-sync -- python -m lfm3_lab run --model text --output-dir ./runs
 ```
 
-別の回数を使うには `--repeats` を指定します。実験結果、ケースの回答、実行ログは `./runs` に保存されます。
+回数を変えるには `--repeats` を指定します。回答、測定結果、ログは `./runs` に保存されます。
+
+Omni と d1-Omni の固定テストは Audio が作った音声も使います。どちらかを単独実行する場合は、先に Audio テストを実行してください。
 
 ## 結果を表示して保存する
 
-全モデルの集計を表示するには `summarize` を実行します。`export` は保存した結果と実行ログを ZIP にまとめます。
+全モデルの集計を表示するには `summarize` を実行します。`export` は結果と実行ログを ZIP にまとめます。
 
 ```console
-python -m lfm3_lab summarize --output-dir ./runs
-python -m lfm3_lab export --output-dir ./runs
+uv run --active --no-sync -- python -m lfm3_lab summarize --output-dir ./runs
+uv run --active --no-sync -- python -m lfm3_lab export --output-dir ./runs
 ```
 
-ZIP は実行環境で生成するローカル成果物です。リポジトリには含めません。
+ZIP は実行環境で作る成果物です。リポジトリには含めません。
 
 ## Python から呼び出す
 
-次の表示例は、IPythonが入っているJupyterまたはColab用です。通常のターミナルでは、上のCLIコマンドを使ってください。
+次の例は、パッケージをインストールした環境の Jupyter または Colab で実行します。
 
 ```python
 from lfm3_lab import Lab
@@ -68,13 +69,11 @@ result = lab.run("text", repeats=3)
 lab.show(result)
 ```
 
-自由入力の文章を試すには `run_text` を使います。
+自由入力には `run_text` を使います。
 
 ```python
 answer = lab.run_text("18 と 24 を足してください。", repeats=1)
 print(answer.answer)
 ```
 
-Omni と d1-Omni の固定テストは Audio が作る音声も使います。個別に実行する場合は、先に Audio のテストを実行してください。成功数は小規模な固定ケースに対する値で、モデル全般の性能を表すものではありません。
-
-
+各モデルの成功数は小規模な固定ケースに対する値です。モデル全般の性能を表しません。

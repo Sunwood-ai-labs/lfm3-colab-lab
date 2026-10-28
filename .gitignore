@@ -23,3 +23,8 @@ __pycache__/
 .pytest_cache/
 build/
 dist/
+
+# Documentation dependencies and generated site
+node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/

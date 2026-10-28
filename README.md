@@ -1,55 +1,83 @@
-# LFM3 を Colab T4 で試す
+<div align="center">
+  <img src="assets/banner.svg" alt="LFM3 Colab Lab の図形バナー" width="100%">
+  <h1>LFM3 Colab Lab</h1>
+  <p>Liquid AI の6モデルを、Google Colab の Tesla T4 で試すノートブックと実験記録です。</p>
+  <p><a href="README.md">日本語</a> · <a href="README.en.md">English</a></p>
+</div>
 
-[![Colab で開く](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/LFM3_Colab_T4.ipynb)
+<p align="center">
+  <a href="https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/LFM3_Colab_T4.ipynb"><img alt="Open in Google Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
+  <a href="https://github.com/Sunwood-ai-labs/lfm3-colab-lab/actions/workflows/quality.yml"><img alt="Notebook and source quality" src="https://github.com/Sunwood-ai-labs/lfm3-colab-lab/actions/workflows/quality.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+</p>
 
-[![コードとノートブックの検証](https://github.com/Sunwood-ai-labs/lfm3-colab-lab/actions/workflows/quality.yml/badge.svg)](https://github.com/Sunwood-ai-labs/lfm3-colab-lab/actions/workflows/quality.yml)
+## Colab で試す
 
-[実行済みノートをColabで読む](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/results/T4_2026-10-28.ipynb) · [公開版の実行確認](docs/verification.md)
+1. [公開ノートブックを Colab で開く](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/LFM3_Colab_T4.ipynb)。
+2. ランタイムの種類で Tesla T4 GPU を選びます。
+3. 共通準備セルのあと、試したいモデルのセルを実行します。全モデルを試す場合は「すべてのセルを実行」します。
+4. 結果は各モデルのセルの下に表示されます。
 
-Liquid AI の6モデルを Google Colab の NVIDIA Tesla T4 で試せます。文章の言い換えと計算ツールの呼び出し、画像や動画への質問、音声認識と音声対話、分類と項目抽出をモデル別のセルで実行します。ノートブックの実験コード参照先はこのリポジトリの固定した40桁コミットです。
+このリンクは出力を含まない公開ノートブックを開きます。実行を始めるには、Colab でセルを実行してください。T4 を使えないセッションではノートブックは推論を開始しません。初回はモデルを Hugging Face からダウンロードします。
 
-モデルを1つだけ試す場合は、共通準備セルを実行してから、そのモデルのセルを実行してください。Omni と d1-Omni は Audio セルが作る音声も使うため、Audio を先に実行します。モデルの重みは Hugging Face から取得し、リポジトリには含めません。
-
-## Colab で実行する
-
-1. 上の「Colab で開く」を押します。
-2. Colab の「ランタイム」からランタイムのタイプを変更し、T4 GPU を選びます。
-3. 「ランタイム」から「すべてのセルを実行」を選びます。各モデルの結果は対応するセルの下に表示されます。
-
-初期設定は各ケース1回です。繰り返して計測する場合は、最初の設定セルで `REPEATS = 3` に変えてください。
-
-このノートブックは Tesla T4 以外の GPU では推論を始めません。Colab で T4 を選べない場合は、そのセッションでは実行できません。初回はモデルのダウンロードに時間がかかります。
+同じ入力を繰り返して測る場合は、ノートブック先頭の `REPEATS` を `3` にします。公開版の記録は各ケース1回の実行です。Omni と d1-Omni は Audio セルの出力も使うため、Audio を先に実行します。
 
 ## 6モデルで試せること
 
-| モデル | 主な使い道 | 2026-10-28 の代表テスト |
+| モデル | 試せる内容 | 実験コード |
 | --- | --- | --- |
-| LFM3-1.7B | 文章の言い換え、テキストからのツール呼び出し | 6/6 の応答が成功 |
-| LFM3-VL-2B | 画像と動画への質問、画像からのツール呼び出し | 9/9 の応答が成功 |
-| LFM3-Audio-2B | 音声認識、音声生成、音声対話 | 英語の音声対話と音声ツールは各3/3。日本語の両テストは各0/3 |
-| LFM3-Omni-2B | 音声と画像、音声と動画への質問 | 3/9 の応答が成功。青い図形への質問は3回とも空の応答 |
-| d1-2B | 分類、項目の抽出、画像内の位置と数の判定 | 2/2 のタスク群が成功 |
-| d1-Omni-2B | テキスト、画像、音声を使う判定 | 4タスク群のうち3つが成功 |
+| LFM3-1.7B | 日本語の言い換え、テキストからのツール呼び出し | [`run_text_prompt.py`](experiments/run_text_prompt.py)、[`models.py`](src/lfm3_lab/models.py) |
+| LFM3-VL-2B | 画像や動画についての質問、画像からのツール呼び出し | [`run_video_tools.py`](experiments/run_video_tools.py) |
+| LFM3-Audio-2B | 音声認識、音声生成、音声対話、音声ツール | [`run_audio.py`](experiments/run_audio.py) |
+| LFM3-Omni-2B | 音声と画像、または音声と動画についての質問 | [`run_audio.py`](experiments/run_audio.py) |
+| d1-2B | テキストや画像の分類、項目抽出、位置と個数の判定 | [`run_decisions.py`](experiments/run_decisions.py) |
+| d1-Omni-2B | テキスト、画像、音声を使った判定 | [`run_decisions.py`](experiments/run_decisions.py) |
 
-各モデルで試した内容と回数は異なるため、成功数でモデルを順位付けできません。条件、失敗、測定値は[実験結果と限界](docs/results.md)にまとめています。
+モデル名、Hugging Face の取得先、固定リビジョンは [`models.py`](src/lfm3_lab/models.py) にあります。重みはこのリポジトリに含めず、実行時に取得します。
 
-## 結果の時点
+## 結果を読む
 
-参考の繰り返し測定は、2026年10月28日にColab T4で行った別の記録です。公開版ノートブックもGitHubから取得し、T4・FP16で全セルを実行しました。6モデルに加え、自由入力の「18＋24」へ「42」と回答するところまで確認しています。
+2026年10月28日に、GitHub で公開したノートブックを Google Colab Python CLI から Tesla T4・FP16 で実行した記録があります。実行基盤のエラーはなく、6モデルすべての結果を取得しました。下表は各ケース1回の実行で確認したタスク別の結果です。
 
-[今回の実行済みノート](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/results/T4_2026-10-28.ipynb)と[機械可読な確認記録](results/public-notebook-run.json)を公開しています。今回の初期設定は各ケース1回です。参考値の3回測定とは分けて読んでください。回答の失敗例も残しています。
+| モデル | 通過した検査 / 記録数 | 残った結果 |
+| --- | ---: | --- |
+| LFM3-1.7B | 2 / 2 | 機能上の失敗なし |
+| LFM3-VL-2B | 3 / 3 | 機能上の失敗なし |
+| LFM3-Audio-2B | 9 / 15 | 4件は未採点、2件は機能上の失敗 |
+| LFM3-Omni-2B | 1 / 3 | 2件は機能上の失敗 |
+| d1-2B | 2 / 2 タスク群 | 機能上の失敗なし |
+| d1-Omni-2B | 3 / 4 タスク群 | 1件は機能上の失敗 |
 
-## ライセンス
+この表は小規模な異なるタスクの記録で、モデル間の順位ではありません。Audio の通過には波形の生成だけを確かめた項目も含みます。未採点の項目と失敗例は[公開ノートブックの実行確認](docs/verification.md)を参照してください。
 
-このリポジトリにある実験コードと説明文は MIT ライセンスです。モデルはリポジトリに含めず、実行時に固定した Hugging Face のリビジョンから取得します。各モデルは LFM Open License v1.0 で公開されており、MIT ライセンスの対象ではありません。データとライセンスの出典は[NOTICE](NOTICE.md)を確認してください。
+- [保存済みの1回実行ノートブック](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/results/T4_2026-10-28.ipynb)
+- [公開ノートブックの機械可読な実行記録](results/public-notebook-run.json)
+- [以前の反復測定と失敗例](docs/results.md)
+- [参考実験の機械可読な要約](results/summary.json)
 
-## 詳細と任意のローカル実行
+別の参考実験では、LFM3-Audio-2B の日本語音声対話と音声ツールはそれぞれ0/3でした。LFM3-Omni-2B は青い図形への質問に3回とも応答せず、d1-Omni-2B は音声で「青い図形の7」を尋ねると、3回とも「3」と答えました。これらは公開ノートブックの1回実行とは別の結果です。[参考実験の結果と条件](docs/results.md)を参照してください。
 
-- [実験結果と限界](docs/results.md)
-- [第三者モデルとデータの出典](NOTICE.md)
-- [English overview](docs/README.en.md)
-- [Python CLI でローカル実行](docs/python-cli.md)
+`results/summary.json` は参考実験の機械可読な要約です。主なケースは3回測定し、一部の音声ケースは1回測定しました。`evidence_status` は参考実験の時点で公開ノートブックをまだ実行していなかったことを示します。後日実行した公開ノートブックは `results/public-notebook-run.json` に別の記録があります。
 
-Colab ノートブックを使う場合、CLI のインストールは不要です。
+## 開発する
 
+ドキュメントのプレビューとビルドはリポジトリのルートで実行します。
 
+```console
+npm ci
+npm run docs:dev
+npm run docs:build
+node tools/check_docs.mjs
+npm run docs:preview
+```
+
+配布用スモークチェックは `uv run --no-project python tools/check_distribution.py` で実行できます。Python CLI、ノートブックの確認方法、テストコマンドは[開発への参加方法](CONTRIBUTING.md)を参照してください。ノートブックを Colab で使う場合、ローカルの Python CLI は必要ありません。
+
+## 詳細
+
+- [日本語ドキュメント](https://sunwood-ai-labs.github.io/lfm3-colab-lab/)
+- [英語ドキュメント](https://sunwood-ai-labs.github.io/lfm3-colab-lab/en/)
+- [Python CLI の使い方](docs/python-cli.md)
+- [モデルとデータのライセンス・出典](NOTICE.md)
+- [変更履歴](CHANGELOG.md)
+- [開発への参加方法](CONTRIBUTING.md)
