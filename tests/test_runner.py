@@ -9,15 +9,18 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from types import ModuleType
 from types import SimpleNamespace
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "experiments"))
 
 from lfm3_lab import InfrastructureError, Lab, LabError, SUITES  # noqa: E402
 from lfm3_lab.display import show_result  # noqa: E402
 from lfm3_lab.models import AnswerExample, RunResult, TaskMetric  # noqa: E402
+import run_text_prompt  # noqa: E402
 
 
 def summary_for_text(*, infrastructure_errors: int = 0) -> dict[str, object]:
@@ -253,6 +256,116 @@ class LabRunnerTests(unittest.TestCase):
             self.assertIn("音声（LFM3-Audio-2B）を開始しました", visible[0])
             self.assertTrue(all("private-task-" not in line for line in visible))
             self.assertTrue(any("private-task-29" in line for line in saved))
+
+    def test_text_playground_matches_runner_message_and_t4_fp16_contract(self) -> None:
+        prompt = "テストの質問"
+        observed_calls: list[dict[str, object]] = []
+        fp16 = object()
+
+        class FakeCuda:
+            @staticmethod
+            def is_available() -> bool:
+                return True
+
+            @staticmethod
+            def device_count() -> int:
+                return 1
+
+            @staticmethod
+            def get_device_name(index: int) -> str:
+                return "Tesla T4"
+
+            @staticmethod
+            def get_device_capability(index: int) -> tuple[int, int]:
+                return (7, 5)
+
+            @staticmethod
+            def empty_cache() -> None:
+                return None
+
+        class FakeModel:
+            def eval(self) -> "FakeModel":
+                return self
+
+            def parameters(self):
+                return iter([SimpleNamespace(device=SimpleNamespace(type="cuda"), dtype=fp16)])
+
+        class FakeAutoModel:
+            calls: list[tuple[tuple[object, ...], dict[str, object]]] = []
+
+            @classmethod
+            def from_pretrained(cls, *args, **kwargs) -> FakeModel:
+                cls.calls.append((args, kwargs))
+                return FakeModel()
+
+        class FakeAutoTokenizer:
+            @staticmethod
+            def from_pretrained(*args, **kwargs) -> object:
+                return object()
+
+        class FakeRunner:
+            def __init__(self, mode, model, processor, torch, generation_log) -> None:
+                pass
+
+            def generate(
+                self,
+                case_id: str,
+                turn: str,
+                messages: list[dict[str, object]],
+                tools: list[dict[str, object]] | None,
+                thinking: bool,
+                max_new_tokens: int,
+                attempt: str,
+            ) -> dict[str, object]:
+                observed_calls.append({
+                    "case_id": case_id, "turn": turn, "messages": messages,
+                    "tools": tools, "thinking": thinking, "max_new_tokens": max_new_tokens,
+                    "attempt": attempt,
+                })
+                return {
+                    "raw_text": "回答例",
+                    "cuda_synchronized_wall_seconds": 0.25,
+                    "cuda_peak_allocated_bytes": 1024,
+                    "cuda_peak_reserved_bytes": 2048,
+                }
+
+        fake_torch = ModuleType("torch")
+        fake_torch.float16 = fp16
+        fake_torch.cuda = FakeCuda()
+        fake_transformers = ModuleType("transformers")
+        fake_transformers.AutoModelForCausalLM = FakeAutoModel
+        fake_transformers.AutoTokenizer = FakeAutoTokenizer
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            prompt_path = root / "prompt.txt"
+            prompt_path.write_text(prompt, encoding="utf-8")
+            output_dir = root / "output"
+            with patch.dict(sys.modules, {"torch": fake_torch, "transformers": fake_transformers}), \
+                 patch.object(run_text_prompt, "Runner", FakeRunner), \
+                 patch("run_text_prompt.importlib.metadata.version", return_value="5.21.0"), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                exit_code = run_text_prompt.main([
+                    "--prompt-file", str(prompt_path), "--output-dir", str(output_dir),
+                ])
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(len(observed_calls), 1)
+            call = observed_calls[0]
+            self.assertEqual(call["messages"], [{"role": "user", "content": prompt}])
+            self.assertIsInstance(call["messages"], list)
+            self.assertTrue(all(isinstance(message, dict) and "role" in message for message in call["messages"]))
+            self.assertEqual(
+                {key: call[key] for key in ("case_id", "turn", "tools", "thinking", "max_new_tokens", "attempt")},
+                {
+                    "case_id": "user_text_playground", "turn": "answer", "tools": None,
+                    "thinking": False, "max_new_tokens": 96, "attempt": "sample-1",
+                },
+            )
+            self.assertEqual(FakeAutoModel.calls[0][0][0], "LiquidAI/LFM3-1.7B")
+            self.assertEqual(FakeAutoModel.calls[0][1]["revision"], SUITES["text"].revision)
+            self.assertIs(FakeAutoModel.calls[0][1]["dtype"], fp16)
+            self.assertEqual(FakeAutoModel.calls[0][1]["device_map"], "cuda:0")
+            self.assertEqual(FakeAutoModel.calls[0][1]["attn_implementation"], "eager")
 
 
 if __name__ == "__main__":

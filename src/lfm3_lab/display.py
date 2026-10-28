@@ -227,7 +227,7 @@ def _display_media(path: Path, audio_note: str | None = None) -> None:
         _display(Image(filename=str(path)))
     elif suffix in {".mp4"}:
         _display(Markdown(f"**動画** `{html.escape(path.name)}`"))
-        _display(Video(filename=str(path), embed=True))
+        _display(Video(data=str(path), embed=True))
     elif suffix in {".wav", ".mp3"}:
         _display(Markdown(f"**音声** `{html.escape(path.name)}`"))
         if audio_note:

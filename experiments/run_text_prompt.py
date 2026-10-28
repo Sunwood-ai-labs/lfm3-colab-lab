@@ -22,6 +22,19 @@ def append_jsonl(path: Path, value: Any) -> None:
         handle.write(json.dumps(value, ensure_ascii=False, allow_nan=False) + "\n")
 
 
+def generate_prompt_sample(runner: Runner, prompt: str, index: int) -> dict[str, Any]:
+    """Call the audited Runner contract with one user message and bounded decoding."""
+    return runner.generate(
+        case_id="user_text_playground",
+        turn="answer",
+        messages=[request_message(prompt)],
+        tools=None,
+        thinking=False,
+        max_new_tokens=96,
+        attempt=f"sample-{index}",
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run one ungraded prompt on the pinned LFM3-1.7B T4 model")
     parser.add_argument("--prompt-file", type=Path, required=True)
@@ -80,15 +93,7 @@ def main(argv: list[str] | None = None) -> int:
         runner = Runner("text", model, processor, torch, generation_log)
         samples = []
         for index in range(1, args.repeats + 1):
-            result = runner.generate(
-                case_id="user_text_playground",
-                turn="answer",
-                messages=request_message(prompt),
-                tools=None,
-                thinking=False,
-                max_new_tokens=256,
-                attempt=f"sample-{index}",
-            )
+            result = generate_prompt_sample(runner, prompt, index)
             answer = str(result.get("raw_text") or "")
             sample = {
                 "sample": index,
