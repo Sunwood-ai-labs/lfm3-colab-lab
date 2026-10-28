@@ -1,0 +1,25 @@
+# Local state, logs, archives, credentials, and model files
+.env
+.env.*
+!.env.example
+colab-session*.json
+*.lock
+runtime/
+*.log
+*.zip
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Python, notebook, and writing-tool cache
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.yomiyasu/
+*.egg-info/
+.pytest_cache/
+build/
+dist/

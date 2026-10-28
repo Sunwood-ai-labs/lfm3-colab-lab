@@ -1,0 +1,184 @@
+{
+  "schema_version": "lfm3-colab-results-summary/v1",
+  "evidence_date": "2026-10-28",
+  "evidence_status": "historical experiment; the public GitHub notebook has not yet been executed",
+  "runtime": {
+    "provider": "Google Colab",
+    "gpu": "NVIDIA Tesla T4",
+    "compute_capability": "sm_75",
+    "dtype": "float16",
+    "attention": "eager",
+    "python": "3.13.16",
+    "torch": "2.11.0+cu130",
+    "torchvision": "0.26.0+cu130",
+    "transformers": "5.21.0",
+    "accelerate": "1.15.0",
+    "pillow": "11.3.0",
+    "av": "19.0.2",
+    "torchcodec": "0.11.0+cu130"
+  },
+  "scoring_note": "Counts come from different small suites and are not comparable across models. Latencies cover the model generation or decision call, not model download or loading.",
+  "models": [
+    {
+      "name": "LFM3-1.7B",
+      "model_id": "LiquidAI/LFM3-1.7B",
+      "model_revision": "40ebe0aa6662c9d40389c2f5d565b6a2c6aebacd",
+      "run_script_sha256": "2000ecd4d8a4a5e7503b50a310c0ff39be53fcab77c93881e4708856c21c9d52",
+      "peak_torch_memory_gib": {
+        "allocated": 3.24,
+        "reserved": 3.26
+      },
+      "representative_median_seconds": {
+        "task": "Japanese text rewrite",
+        "seconds": 0.57,
+        "samples": 3,
+        "warmup_excluded": true
+      },
+      "score": {
+        "passed": 6,
+        "attempted": 6,
+        "unit": "scored responses"
+      }
+    },
+    {
+      "name": "LFM3-VL-2B",
+      "model_id": "LiquidAI/LFM3-VL-2B",
+      "model_revision": "f83d2b0a2296aaa277f394990a9b8b949ddf9691",
+      "run_script_sha256": "2000ecd4d8a4a5e7503b50a310c0ff39be53fcab77c93881e4708856c21c9d52",
+      "peak_torch_memory_gib": {
+        "allocated": 6.05,
+        "reserved": 6.17
+      },
+      "video_only_peak_torch_memory_gib": {
+        "allocated": 3.88,
+        "reserved": 3.96
+      },
+      "representative_median_seconds": {
+        "task": "3-second video question, no thinking",
+        "seconds": 1.23,
+        "samples": 3,
+        "warmup_excluded": true
+      },
+      "memory_note": "The 6.05 GiB allocated peak includes an older large-invoice image test. The separate added video test peaked at 3.88 GiB allocated.",
+      "score": {
+        "passed": 9,
+        "attempted": 9,
+        "unit": "scored responses"
+      }
+    },
+    {
+      "name": "LFM3-Audio-2B",
+      "model_id": "LiquidAI/LFM3-Audio-2B",
+      "model_revision": "9d49701c372d6011d900f6abb40c6b296fb706dd",
+      "run_script_sha256": "0d569779c9119f6eec669a584ccfcf08890b75d655407cc118c4772b8c64afca",
+      "peak_torch_memory_gib": {
+        "allocated": 3.86,
+        "reserved": 3.9
+      },
+      "representative_median_seconds": {
+        "task": "Japanese ASR on one human clip",
+        "seconds": 0.69,
+        "samples": 3,
+        "separate_warmup": false,
+        "reference_clip_seconds": 6.96
+      },
+      "semantic_notes": [
+        "English voice chat: 3/3 correct; English voice tool: 3/3 correct.",
+        "Japanese voice chat: 0/3; Japanese voice tool: 0/3.",
+        "The Japanese ASR clip was one human sample; punctuation-retained character error rate was 14.3%.",
+        "Japanese-to-English translation mistranslated 群島 as land.",
+        "The tone description identified intermittent electronic beeps and no speech, but reported 0.1 s for a 0.25 s signal; both cases were ungraded.",
+        "TTS waveform generation was confirmed; Japanese pronunciation quality was not established."
+      ],
+      "score": {
+        "passed": 17,
+        "attempted": 31,
+        "functional_failures": 6,
+        "ungraded": 8,
+        "unit": "records"
+      }
+    },
+    {
+      "name": "LFM3-Omni-2B",
+      "model_id": "LiquidAI/LFM3-Omni-2B",
+      "model_revision": "ce2458cbce4ad970f92032ed94e3d18d30b04f9c",
+      "run_script_sha256": "0d569779c9119f6eec669a584ccfcf08890b75d655407cc118c4772b8c64afca",
+      "peak_torch_memory_gib": {
+        "allocated": 4.68,
+        "reserved": 4.8
+      },
+      "representative_median_seconds": {
+        "task": "video and audio question",
+        "seconds": 0.99,
+        "samples": 3
+      },
+      "semantic_notes": [
+        "Red image/audio question: 3/3 correct.",
+        "Blue image/audio question: 0/3; responses were empty.",
+        "Video/audio question: 0/3; responses gave both digits instead of selecting the requested digit."
+      ],
+      "score": {
+        "passed": 3,
+        "attempted": 9,
+        "unit": "scored responses"
+      }
+    },
+    {
+      "name": "d1-2B",
+      "model_id": "LiquidAI/d1-2B",
+      "model_revision": "cfe5760ff5d5998f91d9ac56bd4b2dbd96996d41",
+      "run_script_sha256": "6652b3225de07d369142032d0d9ab8a02aa7473a4c8e51cd5d89768ac8e48141",
+      "peak_torch_memory_gib": {
+        "allocated": 3.71,
+        "reserved": 5.15
+      },
+      "representative_median_seconds": {
+        "task": "text decision",
+        "seconds": 0.124,
+        "samples": 3
+      },
+      "score": {
+        "passed": 2,
+        "attempted": 2,
+        "unit": "task groups"
+      }
+    },
+    {
+      "name": "d1-Omni-2B",
+      "model_id": "LiquidAI/d1-Omni-2B",
+      "model_revision": "c8d48c08dada0191c6b362820f055cfb49c99426",
+      "run_script_sha256": "6652b3225de07d369142032d0d9ab8a02aa7473a4c8e51cd5d89768ac8e48141",
+      "peak_torch_memory_gib": {
+        "allocated": 4.19,
+        "reserved": 5.57
+      },
+      "representative_median_seconds": {
+        "task": "text decision",
+        "seconds": 0.122,
+        "samples": 3
+      },
+      "semantic_notes": [
+        "Text, image, and audio-classification task groups passed.",
+        "A spoken question asking for the blue 7 received 3 in all three measured repeats."
+      ],
+      "score": {
+        "passed": 3,
+        "attempted": 4,
+        "unit": "task groups"
+      }
+    }
+  ],
+  "historical_baseline": {
+    "scope": "separate earlier JSON extraction suite; not the added image/video suite",
+    "LFM3-1.7B": "15/15 text JSON responses passed",
+    "LFM3-VL-2B": "0/10 invoice-image JSON responses passed"
+  },
+  "scope_not_tested": [
+    "fine-tuning",
+    "all 18 audio languages",
+    "maximum context length",
+    "CPU, NPU, and other hardware",
+    "competitor benchmarks",
+    "empirical probability calibration"
+  ]
+}

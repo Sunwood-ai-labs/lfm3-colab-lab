@@ -1,0 +1,14 @@
+# Colab supplies the CUDA-matched PyTorch stack. Keep torch, torchvision,
+# torchaudio, triton, and NVIDIA CUDA packages out of this file.
+transformers==5.21.0
+accelerate
+huggingface-hub
+Pillow
+librosa
+soundfile
+numpy
+scipy
+imageio-ffmpeg
+av
+pyarrow
+nbformat

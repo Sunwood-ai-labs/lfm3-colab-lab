@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lfm3-colab-lab"
+version = "0.1.0"
+description = "A compact Python interface to six fixed LFM3 Colab experiments."
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Sunwood-ai-labs"}]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Sunwood-ai-labs/lfm3-colab-lab"
+Issues = "https://github.com/Sunwood-ai-labs/lfm3-colab-lab/issues"
+
+[project.scripts]
+lfm3-lab = "lfm3_lab.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
