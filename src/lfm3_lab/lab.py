@@ -119,7 +119,10 @@ class Lab:
         self.output_dir = Path(output_dir).expanduser().resolve()
         self.cache_dir = Path(cache_dir).expanduser().resolve()
         self.repo_root = Path(__file__).resolve().parents[2]
-        self.experiments_dir = self.repo_root / "experiments"
+        package_experiments = Path(__file__).resolve().parent / "experiments"
+        self.experiments_dir = (
+            package_experiments if package_experiments.is_dir() else self.repo_root / "experiments"
+        )
         self._aggregate_module: Any | None = None
 
     def prepare(self) -> dict[str, Any]:
