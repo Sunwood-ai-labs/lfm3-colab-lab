@@ -2,6 +2,10 @@
 
 [![Colab で開く](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/LFM3_Colab_T4.ipynb)
 
+[![コードとノートブックの検証](https://github.com/Sunwood-ai-labs/lfm3-colab-lab/actions/workflows/quality.yml/badge.svg)](https://github.com/Sunwood-ai-labs/lfm3-colab-lab/actions/workflows/quality.yml)
+
+[実行済みノートを読む](notebooks/results/T4_2026-10-28.ipynb) · [公開版の実行確認](docs/verification.md)
+
 Liquid AI の6モデルを Google Colab の NVIDIA Tesla T4 で試せます。文章の言い換えと計算ツールの呼び出し、画像や動画への質問、音声認識と音声対話、分類と項目抽出をモデル別のセルで実行します。ノートブックの実験コード参照先はこのリポジトリの固定した40桁コミットです。
 
 モデルを1つだけ試す場合は、共通準備セルを実行してから、そのモデルのセルを実行してください。Omni と d1-Omni は Audio セルが作る音声も使うため、Audio を先に実行します。モデルの重みは Hugging Face から取得し、リポジトリには含めません。
@@ -31,7 +35,9 @@ Liquid AI の6モデルを Google Colab の NVIDIA Tesla T4 で試せます。�
 
 ## 結果の時点
 
-このリポジトリに載せた結果は、2026年10月28日に Colab の T4 で行った実験です。公開版ノートブックを GitHub から開いて実行した結果ではありません。公開ノートブックの実行結果はまだありません。
+参考の繰り返し測定は、2026年10月28日にColab T4で行った別の記録です。公開版ノートブックもGitHubから取得し、T4・FP16で全セルを実行しました。6モデルに加え、自由入力の「18＋24」へ「42」と回答するところまで確認しています。
+
+[今回の実行済みノート](notebooks/results/T4_2026-10-28.ipynb)と[機械可読な確認記録](results/public-notebook-run.json)を公開しています。今回の初期設定は各ケース1回です。参考値の3回測定とは分けて読んでください。回答の失敗例も残しています。
 
 ## ライセンス
 
