@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="assets/banner.svg" alt="LFM3 Colab Lab の図形バナー" width="100%">
+  <img src="assets/banner.svg" alt="Geometric banner for LFM3 Colab Lab" width="100%">
   <h1>LFM3 Colab Lab</h1>
-  <p>Liquid AI の6モデルを、Google Colab の Tesla T4 で試すノートブックと実験記録です。</p>
+  <p>Try six Liquid AI models in a Google Colab Tesla T4 notebook and inspect the recorded experiments.</p>
   <p><a href="README.md">日本語</a> · <a href="README.en.md">English</a></p>
 </div>
 
@@ -11,57 +11,57 @@
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
-## Colab で試す
+## Run it in Colab
 
-1. [公開ノートブックを Colab で開く](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/LFM3_Colab_T4.ipynb)。
-2. ランタイムの種類で Tesla T4 GPU を選びます。
-3. 共通準備セルのあと、試したいモデルのセルを実行します。全モデルを試す場合は「すべてのセルを実行」します。
-4. 結果は各モデルのセルの下に表示されます。
+1. [Open the public notebook in Colab](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/LFM3_Colab_T4.ipynb).
+2. Select a Tesla T4 GPU in the runtime settings.
+3. Run the shared setup cell, then run the model cell you want. Choose **Runtime > Run all** to try every model.
+4. Each result appears below its model cell.
 
-このリンクは出力を含まない公開ノートブックを開きます。実行を始めるには、Colab でセルを実行してください。T4 を使えないセッションではノートブックは推論を開始しません。初回はモデルを Hugging Face からダウンロードします。
+The link opens the public notebook without saved outputs. Run its cells in Colab to start inference. The notebook stops before inference when the session has no T4. On the first run, it downloads model weights from Hugging Face.
 
-同じ入力を繰り返して測る場合は、ノートブック先頭の `REPEATS` を `3` にします。公開版の記録は各ケース1回の実行です。Omni と d1-Omni は Audio セルの出力も使うため、Audio を先に実行します。
+Set `REPEATS` to `3` in the first notebook cell to repeat each case. The published execution record uses one run per case. The Omni and d1-Omni suites also use audio from the Audio cell, so run Audio first.
 
-## 6モデルで試せること
+## What the six models do
 
-| モデル | 試せる内容 | 実験コード |
+| Model | Try it for | Experiment code |
 | --- | --- | --- |
-| LFM3-1.7B | 日本語の言い換え、テキストからのツール呼び出し | [`run_text_prompt.py`](experiments/run_text_prompt.py)、[`models.py`](src/lfm3_lab/models.py) |
-| LFM3-VL-2B | 画像や動画についての質問、画像からのツール呼び出し | [`run_video_tools.py`](experiments/run_video_tools.py) |
-| LFM3-Audio-2B | 音声認識、音声生成、音声対話、音声ツール | [`run_audio.py`](experiments/run_audio.py) |
-| LFM3-Omni-2B | 音声と画像、または音声と動画についての質問 | [`run_audio.py`](experiments/run_audio.py) |
-| d1-2B | テキストや画像の分類、項目抽出、位置と個数の判定 | [`run_decisions.py`](experiments/run_decisions.py) |
-| d1-Omni-2B | テキスト、画像、音声を使った判定 | [`run_decisions.py`](experiments/run_decisions.py) |
+| LFM3-1.7B | Japanese text rewriting and text tool calls | [`run_text_prompt.py`](experiments/run_text_prompt.py), [`models.py`](src/lfm3_lab/models.py) |
+| LFM3-VL-2B | Image and video questions, image tool calls | [`run_video_tools.py`](experiments/run_video_tools.py) |
+| LFM3-Audio-2B | Speech recognition, speech generation, voice chat, audio tools | [`run_audio.py`](experiments/run_audio.py) |
+| LFM3-Omni-2B | Questions about audio with images or video | [`run_audio.py`](experiments/run_audio.py) |
+| d1-2B | Text and image classification, extraction, locations, and counts | [`run_decisions.py`](experiments/run_decisions.py) |
+| d1-Omni-2B | Decisions from text, images, and audio | [`run_decisions.py`](experiments/run_decisions.py) |
 
-モデル名、Hugging Face の取得先、固定リビジョンは [`models.py`](src/lfm3_lab/models.py) にあります。重みはこのリポジトリに含めず、実行時に取得します。
+The model names, Hugging Face IDs, and pinned revisions live in [`models.py`](src/lfm3_lab/models.py). This repository does not include model weights. The notebook downloads them when you run it.
 
-## 結果を読む
+## Read the results
 
-2026年10月28日に、GitHub で公開したノートブックを Google Colab Python CLI から Tesla T4・FP16 で実行した記録があります。実行基盤のエラーはなく、6モデルすべての結果を取得しました。下表は各ケース1回の実行で確認したタスク別の結果です。
+On 2026-10-28, the public GitHub notebook was fetched and run through the Google Colab Python CLI on a Tesla T4 with FP16. The record covers one run per case across all six models.
 
-| モデル | 通過した検査 / 記録数 | 残った結果 |
+| Model | Checks passed / records | Remaining results |
 | --- | ---: | --- |
-| LFM3-1.7B | 2 / 2 | 機能上の失敗なし |
-| LFM3-VL-2B | 3 / 3 | 機能上の失敗なし |
-| LFM3-Audio-2B | 9 / 15 | 4件は未採点、2件は機能上の失敗 |
-| LFM3-Omni-2B | 1 / 3 | 2件は機能上の失敗 |
-| d1-2B | 2 / 2 タスク群 | 機能上の失敗なし |
-| d1-Omni-2B | 3 / 4 タスク群 | 1件は機能上の失敗 |
+| LFM3-1.7B | 2 / 2 | No functional failures |
+| LFM3-VL-2B | 3 / 3 | No functional failures |
+| LFM3-Audio-2B | 9 / 15 | 4 ungraded records, 2 functional failures |
+| LFM3-Omni-2B | 1 / 3 | 2 functional failures |
+| d1-2B | 2 / 2 task groups | No functional failures |
+| d1-Omni-2B | 3 / 4 task groups | 1 functional failure |
 
-この表は小規模な異なるタスクの記録で、モデル間の順位ではありません。Audio の通過には波形の生成だけを確かめた項目も含みます。未採点の項目と失敗例は[公開ノートブックの実行確認](docs/verification.md)を参照してください。
+These are small, different task sets. Their counts do not rank the models. Some Audio checks only confirm that a waveform was generated. See the [public notebook execution record](docs/verification.md) for ungraded cases and failures.
 
-- [保存済みの1回実行ノートブック](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/results/T4_2026-10-28.ipynb)
-- [公開ノートブックの機械可読な実行記録](results/public-notebook-run.json)
-- [以前の反復測定と失敗例](docs/results.md)
-- [参考実験の機械可読な要約](results/summary.json)
+- [Saved notebook from the one-run execution](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/results/T4_2026-10-28.ipynb)
+- [Machine-readable public notebook record](results/public-notebook-run.json)
+- [Separate historical repeated measurements and failures](docs/results.md)
+- [Machine-readable historical summary](results/summary.json)
 
-別の参考実験では、LFM3-Audio-2B の日本語音声対話と音声ツールはそれぞれ0/3でした。LFM3-Omni-2B は青い図形への質問に3回とも応答せず、d1-Omni-2B は音声で「青い図形の7」を尋ねると、3回とも「3」と答えました。これらは公開ノートブックの1回実行とは別の結果です。[参考実験の結果と条件](docs/results.md)を参照してください。
+The separate reference experiment repeated most cases three times. Some audio cases ran once. The Audio Japanese voice chat and voice-tool results were 0/3 each. Omni returned no answer to the blue-shape question in all three runs. d1-Omni answered 3 when the spoken question asked for the blue 7. See [historical results and conditions](docs/results.md).
 
-`results/summary.json` は参考実験の機械可読な要約です。主なケースは3回測定し、一部の音声ケースは1回測定しました。`evidence_status` は参考実験の時点で公開ノートブックをまだ実行していなかったことを示します。後日実行した公開ノートブックは `results/public-notebook-run.json` に別の記録があります。
+`results/summary.json` is the machine-readable reference record. Its `evidence_status` says that the public GitHub notebook had not yet been run at that earlier point. The later public notebook execution has a separate record in `results/public-notebook-run.json`.
 
-## 開発する
+## Develop
 
-ドキュメントのプレビューとビルドはリポジトリのルートで実行します。
+Run the documentation preview and build from the repository root.
 
 ```console
 npm ci
@@ -71,13 +71,13 @@ node tools/check_docs.mjs
 npm run docs:preview
 ```
 
-配布用スモークチェックは `uv run --no-project python tools/check_distribution.py` で実行できます。Python CLI、ノートブックの確認方法、テストコマンドは[開発への参加方法](CONTRIBUTING.md)を参照してください。ノートブックを Colab で使う場合、ローカルの Python CLI は必要ありません。
+See [Contributing](CONTRIBUTING.md) for the Python CLI, notebook checks, and test commands. You do not need the local Python CLI to run the notebook in Colab.
 
-## 詳細
+## More information
 
+- [English documentation](https://sunwood-ai-labs.github.io/lfm3-colab-lab/en/)
 - [日本語ドキュメント](https://sunwood-ai-labs.github.io/lfm3-colab-lab/)
-- [英語ドキュメント](https://sunwood-ai-labs.github.io/lfm3-colab-lab/en/)
-- [Python CLI の使い方](docs/python-cli.md)
-- [モデルとデータのライセンス・出典](NOTICE.md)
-- [変更履歴](CHANGELOG.md)
-- [開発への参加方法](CONTRIBUTING.md)
+- [Python CLI guide](docs/python-cli.md)
+- [Model and data licenses and sources](NOTICE.md)
+- [Changelog](CHANGELOG.md)
+- [Contributing](CONTRIBUTING.md)
