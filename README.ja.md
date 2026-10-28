@@ -2,7 +2,7 @@
   <img src="assets/banner.svg" alt="LFM3 Colab Lab の図形バナー" width="100%">
   <h1>LFM3 Colab Lab</h1>
   <p>Liquid AI の6モデルを、Google Colab の Tesla T4 で試すノートブックと実験記録です。</p>
-  <p><a href="README.md">日本語</a> · <a href="README.en.md">English</a></p>
+  <p><a href="README.md">English</a> · <strong>日本語</strong></p>
 </div>
 
 <p align="center">

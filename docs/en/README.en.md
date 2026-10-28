@@ -10,6 +10,6 @@ Open the [Colab notebook](https://colab.research.google.com/github/Sunwood-ai-la
 - [Results and limitations](/en/results)
 - [Public notebook validation](/en/verification)
 - [Run the Python CLI](/en/python-cli)
-- [Japanese quick start](https://github.com/Sunwood-ai-labs/lfm3-colab-lab/blob/main/README.md)
+- [Japanese quick start](https://github.com/Sunwood-ai-labs/lfm3-colab-lab/blob/main/README.ja.md)
 
 The experiment code and documentation use the MIT License. Model weights have separate terms. See [NOTICE](https://github.com/Sunwood-ai-labs/lfm3-colab-lab/blob/main/NOTICE.md).

@@ -8,10 +8,12 @@ const origin = 'https://docs.invalid'
 const pages = new Map()
 const errors = []
 
-for (const name of ['README.md', 'README.en.md', 'CONTRIBUTING.md', 'CHANGELOG.md']) {
+for (const name of ['README.md', 'README.ja.md', 'CONTRIBUTING.md', 'CHANGELOG.md']) {
   const markdown = await readFile(name, 'utf8')
-  for (const match of markdown.matchAll(/\]\(([^\s)]+)(?:\s+"[^"]*")?\)/g)) {
-    const target = match[1].replace(/^<|>$/g, '').split('#')[0]
+  const targets = [...markdown.matchAll(/\]\(([^\s)]+)(?:\s+"[^"]*")?\)/g)].map(match => match[1])
+  targets.push(...[...markdown.matchAll(/\b(?:href|src)="([^"]+)"/g)].map(match => match[1]))
+  for (const raw of targets) {
+    const target = raw.replace(/^<|>$/g, '').split('#')[0]
     if (!target || /^[a-z]+:/i.test(target) || target.startsWith('/')) continue
     try {
       await stat(path.resolve(path.dirname(name), decodeURIComponent(target)))

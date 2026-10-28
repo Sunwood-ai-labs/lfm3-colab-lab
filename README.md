@@ -2,7 +2,7 @@
   <img src="assets/banner.svg" alt="Geometric banner for LFM3 Colab Lab" width="100%">
   <h1>LFM3 Colab Lab</h1>
   <p>Try six Liquid AI models in a Google Colab Tesla T4 notebook and inspect the recorded experiments.</p>
-  <p><a href="README.md">日本語</a> · <a href="README.en.md">English</a></p>
+  <p><strong>English</strong> · <a href="README.ja.md">日本語</a></p>
 </div>
 
 <p align="center">
