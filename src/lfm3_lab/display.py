@@ -133,7 +133,12 @@ def show_result(result: RunResult) -> None:
         f"標準エラー: <code>{html.escape(str(result.stderr_path))}</code></p></details>"
     )
     _display_html("".join(parts))
-    for path in result.media_paths[:1]:
+    media = sorted(result.media_paths, key=lambda path: (
+        path.name != "voice-chat-math-en-full-r1.wav",
+        path.name != "voice-tool-add-en-r1.wav",
+        path.name,
+    )) if result.suite == "audio" else result.media_paths
+    for path in media[:1]:
         _display_media(path, _audio_note(path) if path.suffix.casefold() in {".wav", ".mp3"} else None)
     _display_html("".join(details))
 

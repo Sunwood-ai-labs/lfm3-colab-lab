@@ -39,3 +39,5 @@ The original experiment code and documentation in this repository use the MIT Li
 - [Results and limitations](results.md)
 - [Optional Python CLI guide (Japanese)](python-cli.md)
 - [Third-party model and data notices](../NOTICE.md)
+
+The notebook starts with one repetition per case. Set `REPEATS = 3` in the first configuration cell for repeated measurements. A one-sample timing is a demonstration, not a stable comparison.

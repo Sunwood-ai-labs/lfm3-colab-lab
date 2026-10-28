@@ -22,6 +22,14 @@ DEFAULT_OUTPUT_DIR = Path(os.environ.get("LFM3_RESULTS_DIR", "/content/lfm3-resu
 DEFAULT_CACHE_DIR = Path(os.environ.get("LFM3_CACHE_DIR", "/content/lfm3-cache"))
 _ANSWER_KEYS = ("final_response", "raw_text", "raw_output", "raw_result", "answer", "response")
 _MEDIA_SUFFIXES = {".wav", ".mp3", ".mp4", ".png", ".jpg", ".jpeg", ".webp"}
+_PROGRESS_LABELS = {
+    "text": "テキスト（LFM3-1.7B）",
+    "vision": "画像・動画（LFM3-VL-2B）",
+    "audio": "音声（LFM3-Audio-2B）",
+    "omni": "音声・動画（LFM3-Omni-2B）",
+    "d1": "推論（d1-2B）",
+    "d1_omni": "音声・推論（d1-Omni-2B）",
+}
 
 
 class LabError(RuntimeError):
@@ -127,6 +135,7 @@ class Lab:
                 "--output-dir", str(self.output_dir),
                 "--cache-dir", str(self.cache_dir),
             ],
+            display_label="固定入力の準備",
         )
         self._require_success(invocation, "input preparation")
         manifest = _read_json(self.output_dir / "inputs" / "manifest.json")
@@ -155,7 +164,7 @@ class Lab:
                 "--output-dir", str(self.output_dir),
                 "--repeats", str(repeats),
             ],
-            display_label=suite,
+            display_label=_PROGRESS_LABELS[spec.key],
         )
         summary = self._aggregate()
         row = next((model for model in summary.get("models", []) if model.get("suite_key") == spec.aggregate_key), None)
@@ -239,6 +248,7 @@ class Lab:
                 "--output-dir", str(run_dir),
                 "--repeats", str(repeats),
             ],
+            display_label="テキスト自由入力",
         )
         summary_path = run_dir / "summary.json"
         if not summary_path.is_file():
@@ -430,6 +440,7 @@ class Lab:
         command: Sequence[str],
         *,
         display_label: str | None = None,
+        announce_start: bool = True,
     ) -> _Invocation:
         invocation_id = _utc_id()
         log_dir = self.output_dir / "process_logs" / invocation_id
@@ -467,18 +478,17 @@ class Lab:
             })
             raise InfrastructureError(f"Could not start {label}: {exc}. Logs: {stdout_path}, {stderr_path}") from exc
 
-        def drain(stream: Any, path: Path, *, display_progress: bool) -> None:
-            with path.open("w", encoding="utf-8", newline="\n") as handle:
+        def drain(stream: Any, path: Path) -> None:
+            with stream, path.open("w", encoding="utf-8", newline="\n") as handle:
                 for line in iter(stream.readline, ""):
                     handle.write(line)
-                    if display_progress:
-                        self._display_progress(display_label or label, line)
                 handle.flush()
 
-        stdout_thread = threading.Thread(target=drain, args=(process.stdout, stdout_path), kwargs={"display_progress": True})
-        stderr_thread = threading.Thread(target=drain, args=(process.stderr, stderr_path), kwargs={"display_progress": False})
+        stdout_thread = threading.Thread(target=drain, args=(process.stdout, stdout_path))
+        stderr_thread = threading.Thread(target=drain, args=(process.stderr, stderr_path))
         progress_label = display_label or label
-        print(f"[{progress_label}] started; full stdout and stderr are being saved to disk", flush=True)
+        if announce_start:
+            print(f"{progress_label}を開始しました。実行ログを保存しています。", flush=True)
         stdout_thread.start()
         stderr_thread.start()
         while True:
@@ -486,8 +496,8 @@ class Lab:
                 returncode = process.wait(timeout=30)
                 break
             except subprocess.TimeoutExpired:
-                elapsed_minutes = int((time.perf_counter() - started) // 60)
-                print(f"[{progress_label}] still running ({elapsed_minutes} min elapsed)", flush=True)
+                elapsed = self._elapsed_japanese(time.perf_counter() - started)
+                print(f"{progress_label}を実行中です（経過時間：{elapsed}）。", flush=True)
         stdout_thread.join()
         stderr_thread.join()
         elapsed = time.perf_counter() - started
@@ -503,24 +513,15 @@ class Lab:
         return _Invocation(returncode, elapsed, stdout_path, stderr_path, record_path)
 
     @staticmethod
-    def _display_progress(label: str, line: str) -> None:
-        text = line.strip()
-        if not text:
-            return
-        try:
-            record = json.loads(text)
-        except json.JSONDecodeError:
-            record = None
-        if isinstance(record, dict):
-            case = record.get("case_id") or record.get("task_id")
-            status = record.get("status")
-            if case and status:
-                print(f"[{label}] {str(case)[:72]} {str(status)[:32]}", flush=True)
-            elif record.get("prepared") is True:
-                print(f"[{label}] fixed inputs prepared", flush=True)
-            return
-        if text.startswith(("Downloading pinned", "FLEURS schema")):
-            print(f"[{label}] {text[:120]}", flush=True)
+    def _elapsed_japanese(seconds: float) -> str:
+        elapsed = max(0, int(seconds))
+        hours, remainder = divmod(elapsed, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        if hours:
+            return f"{hours}時間{minutes}分"
+        if minutes:
+            return f"{minutes}分{seconds}秒" if seconds else f"{minutes}分"
+        return f"{seconds}秒"
 
     def _require_success(self, invocation: _Invocation, action: str) -> None:
         if invocation.returncode == 0:
@@ -542,6 +543,8 @@ class Lab:
                 "--root", str(self.output_dir),
                 "--scripts-dir", str(self.experiments_dir),
             ],
+            display_label="結果の集計",
+            announce_start=False,
         )
         self._require_success(invocation, "result aggregation")
         summary = _read_json(self.output_dir / "summary.json")

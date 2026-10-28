@@ -152,7 +152,7 @@ def build_notebook(code_ref: str = PENDING_CODE_REF) -> dict[str, Any]:
 
             このノートブックはTesla T4だけで実行します。GPUを割り当てられなかった場合や、別のGPUが選ばれた場合は最初のセルで停止します。
 
-            各モデルの固定ケースは3回実行します。モデルの読み込みを含まない推論時間と、VRAMの最大値を各節に表示します。
+            最初は各モデルの固定ケースを1回ずつ試します。繰り返して速度を比べたい場合は、次のセルのREPEATSを3に変えてください。1回だけの計測値は変動するため、性能の順位付けには使わないでください。
             """,
         ),
         make_cell(
@@ -161,7 +161,7 @@ def build_notebook(code_ref: str = PENDING_CODE_REF) -> dict[str, Any]:
             """
             import torch
 
-            REPEATS = 3
+            REPEATS = 1
 
             if not torch.cuda.is_available():
                 raise RuntimeError("ランタイムの種類をGPU（T4）に変更してから再実行してください。")

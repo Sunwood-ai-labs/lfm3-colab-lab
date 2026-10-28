@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import contextlib
+import io
 import os
 import subprocess
 import sys
@@ -227,6 +229,30 @@ class LabRunnerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         for command in ("prepare", "run", "summarize", "export"):
             self.assertIn(command, result.stdout)
+
+    def test_process_keeps_full_stdout_in_log_but_only_shows_short_japanese_progress(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            lab = Lab(temporary)
+            captured = io.StringIO()
+            child = (
+                "import json\n"
+                "for i in range(30):\n"
+                " print(json.dumps({'case_id': f'private-task-{i}', 'status': 'passed'}))\n"
+            )
+            with contextlib.redirect_stdout(captured):
+                invocation = lab._run_process(
+                    "tiny-cpu-child",
+                    [sys.executable, "-u", "-c", child],
+                    display_label="音声（LFM3-Audio-2B）",
+                )
+            visible = captured.getvalue().splitlines()
+            saved = invocation.stdout_path.read_text(encoding="utf-8").splitlines()
+            self.assertEqual(invocation.returncode, 0)
+            self.assertLessEqual(len(visible), 2)
+            self.assertEqual(len(saved), 30)
+            self.assertIn("音声（LFM3-Audio-2B）を開始しました", visible[0])
+            self.assertTrue(all("private-task-" not in line for line in visible))
+            self.assertTrue(any("private-task-29" in line for line in saved))
 
 
 if __name__ == "__main__":
