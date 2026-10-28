@@ -273,6 +273,12 @@ def build_notebook(code_ref: str = PENDING_CODE_REF) -> dict[str, Any]:
             pip_step([sys.executable, "-m", "pip", "install", "--no-deps", "-e", str(REPO_ROOT)])
             if runtime_snapshot() != before:
                 raise RuntimeError("TorchまたはCUDA関連のバージョンが変わりました。ランタイムを再起動してください。")
+            import importlib
+            sys.path.insert(0, str(REPO_ROOT / "src"))
+            for name in list(sys.modules):
+                if name == "lfm3_lab" or name.startswith("lfm3_lab."):
+                    del sys.modules[name]
+            importlib.invalidate_caches()
             print(f"依存関係を設定しました。Torch {before[0]} / CUDA {before[1]} は維持されています。")
             """,
         ),

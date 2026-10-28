@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import ast
 import sys
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -21,6 +22,32 @@ from tools.check_notebook import (
 
 
 class NotebookBuilderTests(unittest.TestCase):
+    def test_install_cell_imports_checked_out_source_in_the_running_kernel(self) -> None:
+        notebook = build_notebook("a1" * 20)
+        install_cell = next(source_text(cell) for cell in notebook["cells"]
+                            if cell["cell_type"] == "code" and '"--no-deps"' in source_text(cell))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            package = root / "src" / "lfm3_lab"
+            package.mkdir(parents=True)
+            (package / "__init__.py").write_text("MARKER = 'checked-out-code'\n", encoding="utf-8")
+            probe = """import sys, types
+from pathlib import Path
+stale = types.ModuleType('lfm3_lab')
+stale.MARKER = 'stale-kernel-module'
+sys.modules['lfm3_lab'] = stale
+before = ('test-torch', 'test-cuda', {})
+context = {'sys': sys, 'REPO_ROOT': Path(sys.argv[2]), 'requirement': Path('unused'),
+           'pip_step': lambda args: None, 'before': before, 'runtime_snapshot': lambda: before}
+exec(sys.argv[1], context)
+import lfm3_lab
+assert lfm3_lab.MARKER == 'checked-out-code'
+assert Path(lfm3_lab.__file__).resolve().is_relative_to(Path(sys.argv[2]).resolve())
+"""
+            completed = subprocess.run([sys.executable, "-c", probe, install_cell, str(root)],
+                                       capture_output=True, text=True)
+            self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+
     def test_builder_pins_the_requested_public_commit(self) -> None:
         commit = "a1" * 20
         notebook = build_notebook(commit)
