@@ -27,7 +27,7 @@ These small suites test different tasks, so their pass counts do not rank the mo
 
 ## Result date
 
-The repeated reference measurements come from a separate Colab T4 experiment on 2026-10-28. The public notebook was also fetched from GitHub and completed on a Tesla T4 with FP16, including all six model suites and the editable text example. This first-run notebook uses one repetition per case. See [the executed notebook](../notebooks/results/T4_2026-10-28.ipynb) and [the validation record](verification.md).
+The repeated reference measurements come from a separate Colab T4 experiment on 2026-10-28. The public notebook was also fetched from GitHub and completed on a Tesla T4 with FP16, including all six model suites and the editable text example. This first-run notebook uses one repetition per case. See [the executed notebook](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/results/T4_2026-10-28.ipynb) and [the validation record](verification.md).
 
 ## License
 

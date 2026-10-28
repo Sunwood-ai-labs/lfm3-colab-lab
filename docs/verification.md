@@ -3,7 +3,7 @@
 2026年10月28日、GitHubから取得したノートブックをGoogle Colab Python CLIで実行しました。Tesla T4・FP16で、共通の準備、全6モデル、自由入力、ZIP出力までの14コードセルが実行エラーなく終了しました。
 
 - [自分で試すノートブック](../notebooks/LFM3_Colab_T4.ipynb)
-- [実行結果を読むノートブック](../notebooks/results/T4_2026-10-28.ipynb)
+- [実行結果を読むノートブック](https://colab.research.google.com/github/Sunwood-ai-labs/lfm3-colab-lab/blob/main/notebooks/results/T4_2026-10-28.ipynb)
 - [機械可読な確認記録](../results/public-notebook-run.json)
 
 ## 何を確認したか
@@ -36,3 +36,5 @@
 - 実行済みノートのSHA-256: `7d8ff55a2214cdebdc3b568d2098aa221333fe116017ab1f3c8ee116805745c1`
 
 実行用のT4ランタイムは、結果を回収した後に停止しました。
+
+メディアを含む実行済みノートは、上のColabリンクで閲覧してください。GitHubのプレビューでは表示できない場合があります。Colabでは、保存済みの出力をランタイムに接続せずに読めます。
